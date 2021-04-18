@@ -256,7 +256,7 @@ elif choice=='Graphs':
     fig=px.bar(crop_Tproduce.sort_values())
     st.write(fig)
 
-
+    '''
     st.subheader('Total Production from 1961-2019')
     fao_group=faostat.groupby('Year')['Value'].sum().unstack().fillna(0)
     fig=px.scatter(fao_group, labels={'variable':'Production',})
@@ -281,7 +281,7 @@ elif choice=='Graphs':
     fig.update_yaxes(title_text="<b>primary</b> yaxis title", secondary_y=False)
     fig.update_yaxes(title_text="<b>secondary</b> yaxis title", secondary_y=True)
     st.write(fig)
-
+    '''
     """
     st.subheader('State Production (1997-2015)')
 
@@ -501,7 +501,13 @@ elif choice=='Model':
         )
         # Reads in saved classification model
         import pickle
-        load_clf = pickle.load(open('rfreg_model.pkl', 'rb'))
+        import gzip, pickle, pickletools
+        filepath = "random_forest_model.pkl"
+        with gzip.open(filepath, 'rb') as f:
+            p = pickle.Unpickler(f)
+            load_clf= p.load()
+
+        #load_clf = pickle.load(open('rfreg_model.pkl', 'rb'))
 
 
         # User Input Predictions
