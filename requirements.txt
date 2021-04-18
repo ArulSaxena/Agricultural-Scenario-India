@@ -1,7 +1,5 @@
 streamlit
 plotly.express
-plotly.subplots
-plotly.graph_objects
 pickle
 gzip
 pickletools
