@@ -256,62 +256,7 @@ elif choice=='Graphs':
     fig=px.bar(crop_Tproduce.sort_values())
     st.write(fig)
 
-    '''
-    st.subheader('Total Production from 1961-2019')
-    fao_group=faostat.groupby('Year')['Value'].sum().unstack().fillna(0)
-    fig=px.scatter(fao_group, labels={'variable':'Production',})
-    st.write(fig)
-
-    st.subheader('Total Production Vs Average Rainfall')
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(
-        go.Scatter(fao_group,name="yaxis data" ),
-        secondary_y=False,)
-
-    fig.add_trace(
-        go.Scatter(x=[2, 3, 4], y=[4, 5, 6],name="yaxis2 data" ),
-        secondary_y=True,)
-
-    fig.update_layout(title_text="Double Y Axis Example")
-
-    # Set x-axis title
-    fig.update_xaxes(title_text="xaxis title")
-
-    # Set y-axes titles
-    fig.update_yaxes(title_text="<b>primary</b> yaxis title", secondary_y=False)
-    fig.update_yaxes(title_text="<b>secondary</b> yaxis title", secondary_y=True)
-    st.write(fig)
-    '''
-    """
-    st.subheader('State Production (1997-2015)')
-
-    #Improting JSON file for map
-    import json
-    india_states=json.load(open("india_state_geo.json",'r'))
-
-    #Importing Plotly
-    import plotly.express as px
-    import plotly.io as pio
-    pio.renderers.default
-    map_crop_produce=pd.read_csv('Data/crop_data.csv')
-
-
-    #map_crop_produce['Production_Scale']=np.log10(map_crop_produce['Production'])
-    fig=px.choropleth(map_crop_produce,
-                  locations='id',
-                  geojson=india_states,
-                  color='Production_Scale',
-                  scope='asia',
-                  hover_name='State_Name',
-                  hover_data=['Production'],
-                  title="State Production (1997-2015)",
-                  template="seaborn")
-
-    fig.update_geos(fitbounds='locations',visible=False)
-    fig.write_html('tmp.html', auto_open=True)
-    st.plotly_chart(fig, use_container_width=True)
-"""
-
+    
 #Dataset Page
 elif choice=='Dataset':
 
