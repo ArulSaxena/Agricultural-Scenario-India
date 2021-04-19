@@ -256,7 +256,7 @@ elif choice=='Graphs':
     fig=px.bar(crop_Tproduce.sort_values())
     st.write(fig)
 
-    
+
 #Dataset Page
 elif choice=='Dataset':
 
@@ -482,8 +482,7 @@ elif choice=='Model':
         position=val_list.index(id_state)
         code_value=key_list[position]
         st.sidebar.write('State selected is: ',option_state)
-        st.sidebar.write('State Id is: ',id_state)
-        st.sidebar.write('State code is: ',code_value)
+
 
         option_Crop=st.sidebar.selectbox('Select Crop',df.Crop.unique())
         id_crop=crop_id[option_Crop]
@@ -492,8 +491,7 @@ elif choice=='Model':
         position_crop=val_list_crop.index(id_crop)
         code_value_crop=key_list_crop[position_crop]
         st.sidebar.write('Crop selected is: ',option_Crop)
-        st.sidebar.write('Crop Id is: ',id_crop)
-        st.sidebar.write('State code is: ',code_value_crop)
+        
 
         option_year=st.sidebar.selectbox('Select Year',[1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012])
         st.sidebar.write('Year selected is: ',option_year)
