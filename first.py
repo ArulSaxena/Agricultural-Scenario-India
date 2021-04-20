@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+st.set_page_config(page_title='Agricultural Scenario', page_icon='🌿',layout="centered")
 
 # Dataset import
 df=pd.read_csv('Data/streamlit_data.csv')
@@ -491,7 +492,7 @@ elif choice=='Model':
         position_crop=val_list_crop.index(id_crop)
         code_value_crop=key_list_crop[position_crop]
         st.sidebar.write('Crop selected is: ',option_Crop)
-        
+
 
         option_year=st.sidebar.selectbox('Select Year',[1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012])
         st.sidebar.write('Year selected is: ',option_year)
