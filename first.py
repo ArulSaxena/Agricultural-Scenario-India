@@ -5,17 +5,21 @@ from PIL import Image
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+from matplotlib import style
 
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
-st.set_page_config(page_title='Agricultural Scenario', page_icon='🌿',layout="centered")
 
+st.set_page_config(page_title='Agricultural Scenario', page_icon='🌿',layout="centered")
 # Dataset import
 df=pd.read_csv('Data/streamlit_data.csv')
 crop=pd.read_csv("Data/District-wise, season-wise crop production statistics.csv")
 faostat=pd.read_csv("Data/FAOSTAT_data_2-27-2021.csv")
+rain_df=pd.read_csv("Data/All India area weighted monthly, seasonal and annual rainfall (in mm) from 1901-2015.csv")
+temp_df=pd.read_csv("Data/Mean_Temperatures_India1901-2012.csv")
 
 state_code={"State_Name_0":1,"State_Name_1":2,"State_Name_2":3,"State_Name_3":4,"State_Name_4":5,"State_Name_5":6,"State_Name_6":7,
 "State_Name_7":8,"State_Name_8":9,"State_Name_9":10,"State_Name_10":11,"State_Name_11":12,"State_Name_12":13,"State_Name_13":14,
@@ -197,6 +201,12 @@ if choice=='Home':
 
 
 
+    with st.sidebar.beta_expander("Instruction"):
+        st.write("""
+            The chart above shows some numbers I picked for you.
+            I rolled actual dice for these, so they're *guaranteed* to
+            be random.
+            """)
     st.header('Introduction')
     st.write("""
     India is an agriculture  based nation employing over 50% of the country’s workforce .
@@ -236,16 +246,19 @@ elif choice=='Graphs':
 
 
     st.subheader('State Wise Crop Production (1997-2018)')
+
     State_wise_crop=crop.groupby(['State_Name','Crop']).size().unstack().fillna(0)
     fig=px.bar(State_wise_crop)
     st.write(fig)
 
     st.subheader('State Wise Total Production (1997-2018)')
+
     crop_state_produce_units=crop.groupby('State_Name')['Production'].sum()
     fig=px.bar(crop_state_produce_units.sort_values())
+    fig.update_layout(showlegend=False,width=800,height=600)
     st.write(fig)
 
-    st.subheader('Total Crop Production (1997-2018)')
+    st.subheader('Total Crop Wise Production (1997-2018)')
 
     crop_p=crop
     crop_n=crop.loc[crop['Crop']== "Coconut "].index
@@ -255,7 +268,74 @@ elif choice=='Graphs':
 
     crop_Tproduce=crop_p.groupby('Crop')['Production'].sum()
     fig=px.bar(crop_Tproduce.sort_values())
+    fig.update_layout(showlegend=False,width=800,height=500)
     st.write(fig)
+
+    st.subheader('Total Crop Production')
+
+    crop_t=faostat[faostat['Year']>=1997 ]
+    crop_t=crop_t.groupby('Year')['Value'].sum()
+    fig=px.scatter(crop_t,labels={'value':"Production(tonnes)"})
+    fig.update_layout(showlegend=False,width=800,height=500)
+    fig.update_traces(mode='lines+markers')
+    st.write(fig)
+
+    st.subheader('Crop Production vs Avg. Rainfall')
+
+    style.use('ggplot')
+
+    rain_df=rain_df[rain_df["YEAR"]>=1997]
+
+    fig, ax1 = plt.subplots(figsize=(15, 12))
+
+
+
+
+    ax1.plot(crop_t,marker='D',mfc='green',ms='10',linewidth=3)
+
+
+    color = 'tab:red'
+    ax1.set_xlabel('Year',size=20)
+    ax1.set_ylabel("Production (Tonnes )", color=color,size=15)
+
+    ax1.tick_params(axis='y', labelcolor=color,labelsize=15)
+
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+    color = 'tab:blue'
+    ax2.set_ylabel('Rainfall in mm', color=color,size=15)  # we already handled the x-label with ax1
+    ax2.plot(rain_df["YEAR"],rain_df["ANNUAL"], color=color,marker='o',mfc='purple',ms='10')
+    ax2.tick_params(axis='y', labelcolor=color,labelsize=15)
+    st.pyplot(fig=plt)
+
+    st.subheader('Crop Production vs Avg. Temperature')
+
+    #style.use('ggplot')
+
+    temp_df=temp_df[temp_df["YEAR"]>=1997]
+
+
+    fig, ax1 = plt.subplots(figsize=(15, 12))
+
+
+    ax1.plot(crop_t,marker='D',mfc='green',ms='10',linewidth=3)
+
+
+    color = 'tab:red'
+    ax1.set_xlabel('Year',size=15)
+    ax1.set_ylabel("Production (Tonnes )", color=color,size=15)
+
+    ax1.tick_params(axis='y', labelcolor=color,labelsize=15)
+
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+    color = 'tab:blue'
+    ax2.set_ylabel('Temp (c)', color=color,size=15)  # we already handled the x-label with ax1
+    ax2.plot(temp_df["YEAR"],temp_df["ANNUAL"], color=color,marker='o',mfc='purple',ms='10')
+    ax2.tick_params(axis='y', labelcolor=color,labelsize=15)
+    st.pyplot(fig=plt)
 
 
 #Dataset Page
