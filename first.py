@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
-st.set_page_config(page_title='Agricultural Scenario', page_icon='🌿',layout="centered")
+st.set_page_config(page_title='Agricultural Scenario', page_icon='🌿',layout="centered",initial_sidebar_state='expanded')
 # Dataset import
 df=pd.read_csv('Data/streamlit_data.csv')
 crop=pd.read_csv("Data/District-wise, season-wise crop production statistics.csv")
@@ -201,12 +201,14 @@ if choice=='Home':
 
 
 
-    with st.sidebar.beta_expander("Instruction"):
+    with st.sidebar.beta_expander("Instructions"):
         st.write("""
-            The chart above shows some numbers I picked for you.
-            I rolled actual dice for these, so they're *guaranteed* to
-            be random.
+            This is a Data Driven Web Application made with Streamlit.
+            This is the sidebar that helps to navigate the whole application.
+            For the ease of use of the application we have divied the application in 4 pages(Home, Dataset, Graphs, Model).
+            For more information about the fuctioning of the application please see the home page.
             """)
+
     st.header('Introduction')
     st.write("""
     India is an agriculture  based nation employing over 50% of the country’s workforce .
@@ -235,11 +237,33 @@ if choice=='Home':
 
 
     """)
+
+    st.header('Working of The Application')
+    st.write("""
+    1) This application has been divided into four pages for the easy of use.
+
+    2) These pages are Home Page, Graphs Page, Dataset Page, Model Page.
+
+    3) All these pages have there own purpose and information to display.
+
+    4) Graphs and Dataset page displays the dataset used and graphs obatained from the Data analysis.
+
+    5) The model page takes user input from the sidebar and trains it on pre-trained model and displays the predictions .
+
+    6) The model page also allows to select the model that the user wants to use from a drop down menu.
+
+
+    """)
 # Graph Page
 elif choice=='Graphs':
 
     st.header('Graphs')
 
+    st.write("""
+    This page displays interactive graphs made from plotly.
+    These graphs were obatined by data analysis using python.
+
+    """)
     image = Image.open('Images/predictive-analytics.jpg')
 
     st.image(image,caption='Agriculture and Data Science',use_column_width=True)
@@ -344,6 +368,11 @@ elif choice=='Dataset':
     st.title("""
     Dataset Used
     """)
+    st.write("""
+    This page displays the final dataset used for the whole project.
+    It also displays the columns and the description of the numerical columns.
+    """)
+
 
     image = Image.open('Images/shutterstock_1333662722-678x381.jpg')
 
@@ -380,7 +409,6 @@ elif choice=='Model':
 
             df=pd.read_csv('Data/streamlit_data.csv')
 
-            df_test=df.sample(frac = 0.1)
 
             X=df_test[['Crop_Year','Avg_Temp', 'Avg_Rain','states_id', 'crop_id', 'Area',]].values
 
@@ -390,13 +418,13 @@ elif choice=='Model':
 
             X_train,X_test,y_train,y_test=train_test_split(X,y,test_size = 0.70)
 
-            clf = svm.SVC(kernel='linear') # Linear Kernel
+            model = xgb.XGBRegressor()
 
-            clf.fit(X_train,y_train.ravel())
+            model.fit(X_train,y_train.ravel())
 
             # Pickling the model
 
-            pickle.dump(clf, open('svm_clf.pkl', 'wb'))
+            pickle.dump(model, open('xgb_model.pkl', 'wb'))
 
 
 
@@ -412,7 +440,7 @@ elif choice=='Model':
 
         st.subheader("User Input Predictions")
         u_pred=xgb_load.predict(df_user_input)
-        st.write('Amount of Production Predicted : ' , u_pred[0]-230)
+        st.write('Amount of Production Predicted : ' , float(u_pred[0]-230),'Tonnes')
 
     def rgd_model():
         st.subheader('Code')
@@ -429,16 +457,15 @@ elif choice=='Model':
 
             X_train,X_test,y_train,y_test=train_test_split(X,y,test_size = 0.70)
 
-            clf = RandomForestClassifier(n_estimators = 100)
+            model = Ridge(n_estimators = 100)
 
-            clf.fit(X_train,y_train.ravel())
+            model.fit(X_train,y_train.ravel())
 
-            y_pred = clf.predict(X_test)
+            y_pred = model.predict(X_test)
 
-            st.subheader('Random Forest Classifier')
-            st.write("ACCURACY OF THE MODEL: ", metrics.accuracy_score(y_test, y_pred))
+            # Pickling the model
 
-
+            pickle.dump(model, open('ridge_model.pkl', 'wb'))
 
 
         """
@@ -452,7 +479,7 @@ elif choice=='Model':
 
         st.subheader("User Input Predictions")
         u_pred=load_clf.predict(df_user_input)
-        st.write('Amount of Production Predicted : ' , u_pred[0])
+        st.write('Amount of Production Predicted : ' , float(u_pred[0]),'Tonnes')
 
     def gbr_model():
         st.subheader('Code')
@@ -469,15 +496,15 @@ elif choice=='Model':
 
             X_train,X_test,y_train,y_test=train_test_split(X,y,test_size = 0.70)
 
-            clf = RandomForestClassifier(n_estimators = 100)
+            model = GradientBoosting(n_estimators = 100)
 
-            clf.fit(X_train,y_train.ravel())
+            model.fit(X_train,y_train.ravel())
 
-            y_pred = clf.predict(X_test)
+            y_pred = model.predict(X_test)
 
-            st.subheader('Random Forest Classifier')
-            st.write("ACCURACY OF THE MODEL: ", metrics.accuracy_score(y_test, y_pred))
+            # Pickling the model
 
+            pickle.dump(model, open('gbr_model.pkl', 'wb'))
 
 
 
@@ -492,7 +519,7 @@ elif choice=='Model':
 
         st.subheader("User Input Predictions")
         u_pred=load_clf.predict(df_user_input)
-        st.write('Amount of Production Predicted : ' , u_pred[0])
+        st.write('Amount of Production Predicted : ' , float(u_pred[0]),'Tonnes')
 
 
 
@@ -511,16 +538,15 @@ elif choice=='Model':
 
             X_train,X_test,y_train,y_test=train_test_split(X,y,test_size = 0.70)
 
-            clf = RandomForestClassifier(n_estimators = 100)
+            model = RandomForestRegression(n_estimators = 100)
 
-            clf.fit(X_train,y_train.ravel())
+            model.fit(X_train,y_train.ravel())
 
-            y_pred = clf.predict(X_test)
+            y_pred = model.predict(X_test)
 
-            st.subheader('Random Forest Classifier')
-            st.write("ACCURACY OF THE MODEL: ", metrics.accuracy_score(y_test, y_pred))
+            # Pickling the model
 
-
+            pickle.dump(model, open('rfr_model.pkl', 'wb'))
 
 
         """
@@ -540,7 +566,7 @@ elif choice=='Model':
 
         st.subheader("User Input Predictions")
         u_pred=load_clf.predict(df_user_input)
-        st.write('Amount of Production Predicted : ' , u_pred[0])
+        st.write('Amount of Production Predicted : ' , float(u_pred[0]),'Tonnes')
 
 
     st.title("""
